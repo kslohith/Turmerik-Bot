@@ -43,26 +43,28 @@ def whatsapp_webhook():
     if request.method == "POST":
         incoming_data = request.json
 
-    logging.info("Inside the post method in the server!")
+        logging.info("Inside the post method in the server!")
 
-    # Log the incoming data (optional)
-    logging.info("Incoming Data: %s", incoming_data)
+        # Log the incoming data (optional)
+        logging.info("Incoming Data: %s", incoming_data)
 
-    # Check if the data contains the 'value' key with 'messages'
-    if 'value' in incoming_data:
-        value = incoming_data['value']
+        # Check if the data contains the 'value' key with 'messages'
+        if 'value' in incoming_data:
+            value = incoming_data['value']
 
-        print("Inside Extract message")
+            print("Inside Extract message")
 
-        # Extract messages
-        messages = value.get('messages', [])
-        for message in messages:
-            from_number = message.get('from')  # Sender's number
-            message_id = message.get('id')      # Message ID
-            timestamp = message.get('timestamp') # Message timestamp
-            message_body = message.get('text', {}).get('body') 
-        print(send_whatsapp_message(from_number, message_body))
-        return jsonify({"status": "Received and responded", "message_body": message_body}), 200
+            # Extract messages
+            messages = value.get('messages', [])
+            for message in messages:
+                from_number = message.get('from')  # Sender's number
+                message_id = message.get('id')      # Message ID
+                timestamp = message.get('timestamp') # Message timestamp
+                message_body = message.get('text', {}).get('body') 
+            print(send_whatsapp_message(from_number, message_body))
+            return jsonify({"status": "Received and responded", "message_body": message_body}), 200
+    
+    return jsonify({"status": "No messages received"}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
