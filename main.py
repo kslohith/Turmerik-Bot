@@ -33,14 +33,14 @@ def send_whatsapp_message(to_number, message_body):
 
 @app.route('/getIncomingMessage', methods=['POST','GET'])
 def whatsapp_webhook():
-    print("Inside the webhook method in the server!")
-    print("Request Method:", request.method)
-    print("Request Method:", request.method)
-    print("Request URL:", request.url)
-    print("Request Headers:", request.headers)
-    print("Request Body:", request.get_data(as_text=True))  
-    print("Request Args:", request.args)  
-    print("Request Form:", request.form)
+    print("Inside the webhook method in the server!", flush=True)
+    print("Request Method:", request.method, flush=True)
+    print("Request Method:", request.method, flush=True)
+    print("Request URL:", request.url, flush=True)
+    print("Request Headers:", request.headers, flush=True)
+    print("Request Body:", request.get_data(as_text=True), flush=True)  
+    print("Request Args:", request.args, flush=True)  
+    print("Request Form:", request.form, flush=True)
     # if request.method == "GET":
     #     # Verify token logic
     #     token_sent = request.args.get("hub.verify_token")
