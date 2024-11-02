@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from twilio.rest import Client
 import os
 import requests
-import logging
+import json
 
 app = Flask(__name__)
 
@@ -47,31 +47,20 @@ def whatsapp_webhook():
     #     if token_sent == VERIFY_TOKEN:
     #         return request.args.get("hub.challenge")
     #     return "Verification token mismatch", 403
-    
-    incoming_data = request.json
 
-    print("Inside the post method in the server!")
+    data = json.loads(request.get_data(as_text=True))
 
-    # Log the incoming data (optional)
-    print("Incoming Data: %s", incoming_data)
-
-    # Check if the data contains the 'value' key with 'messages'
-    if 'value' in incoming_data:
-        value = incoming_data['value']
-
-        print("Inside Extract message")
-
-        # Extract messages
-        messages = value.get('messages', [])
-        for message in messages:
-            from_number = message.get('from')  # Sender's number
-            message_id = message.get('id')      # Message ID
-            timestamp = message.get('timestamp') # Message timestamp
-            message_body = message.get('text', {}).get('body') 
-        print(send_whatsapp_message(from_number, message_body))
-        return jsonify({"status": "Received and responded", "message_body": message_body}), 200
-    
-    return jsonify({"status": "No messages received"}), 200
+    # Extract sender and message body
+    try:
+        sender = data['entry'][0]['changes'][0]['value']['messages'][0]['from']
+        message_body = data['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
+        print("Sender:", sender)
+        print("Message Body:", message_body)
+    except (KeyError, IndexError) as e:
+        print("Error extracting data:", e)
+   
+    print(send_whatsapp_message(sender, message_body))
+    return jsonify({"status": "Received and responded", "message_body": message_body}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
