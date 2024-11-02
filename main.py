@@ -39,7 +39,7 @@ def export_to_csv(user_data_list):
     return output
     
 
-def export_to_excel(user_data_list, output_file):
+def export_to_excel(user_data_list):
     if not user_data_list:
         print("No user data found.")
         return
@@ -180,23 +180,27 @@ def start_conversation():
 def extract_data():
     format_requested = request.args.get("format")
     if format_requested == "csv":
-        output_file = "user_data.csv"
-        csv_file = export_to_csv(get_all_user_data(), output_file)
-        return send_file(
-            io.BytesIO(csv_file.getvalue().encode()),
-            mimetype='text/csv',
-            as_attachment=True,
-            attachment_filename='user_data.csv'
-        )
+        csv_file = export_to_csv(get_all_user_data())
+        try:
+            return send_file(
+                io.BytesIO(csv_file.getvalue().encode()),
+                mimetype='text/csv',
+                as_attachment=True,
+                download_name='user_data.csv'
+            )
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
     elif format_requested == "excel":
-        output_file = "user_data.xlsx"
-        excel_file = export_to_excel(get_all_user_data(), output_file)
-        return send_file(
-            excel_file,
-            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            as_attachment=True,
-            attachment_filename='user_data.xlsx'
-        )
+        excel_file = export_to_excel(get_all_user_data())
+        try:
+            return send_file(
+                excel_file,
+                mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                as_attachment=True,
+                download_name='user_data.xlsx'
+            )
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
