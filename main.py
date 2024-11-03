@@ -6,6 +6,7 @@ import io
 from google.cloud import storage
 import pandas as pd
 import csv
+import pyzipper
 
 app = Flask(__name__)
 
@@ -179,14 +180,21 @@ def start_conversation():
 @app.route('/extractData', methods=['GET'])
 def extract_data():
     format_requested = request.args.get("format")
+    # Password rotated everyday centrally and stored in environment variable
+    password = os.environ.get("ZIP_PASSWORD")
     if format_requested == "csv":
         csv_file = export_to_csv(get_all_user_data())
+        memory_file = io.BytesIO()
+        with pyzipper.AESZipFile(memory_file, 'w', compression=pyzipper.ZIP_DEFLATED, encryption=pyzipper.WZ_AES) as zf:
+            zf.setpassword(password.encode('utf-8'))
+            zf.writestr('user_data.csv', csv_file)
+        memory_file.seek(0)
         try:
             return send_file(
-                io.BytesIO(csv_file.getvalue().encode()),
-                mimetype='text/csv',
+                memory_file,
+                mimetype='application/zip',
                 as_attachment=True,
-                download_name='user_data.csv'
+                download_name='user_data.zip'
             )
         except Exception as e:
             return jsonify({"error": str(e)}), 500
