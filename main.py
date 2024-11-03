@@ -183,11 +183,11 @@ def extract_data():
     # Password rotated everyday centrally and stored in environment variable
     password = os.environ.get("ZIP_PASSWORD")
     if format_requested == "csv":
-        csv_file = export_to_csv(get_all_user_data())
+        csv_file = export_to_csv(get_all_user_data()).getvalue()
         memory_file = io.BytesIO()
         with pyzipper.AESZipFile(memory_file, 'w', compression=pyzipper.ZIP_DEFLATED, encryption=pyzipper.WZ_AES) as zf:
             zf.setpassword(password.encode('utf-8'))
-            zf.writestr('user_data.csv', csv_file)
+            zf.writestr('user_data.csv', csv_file.encode('utf-8'))
         memory_file.seek(0)
         try:
             return send_file(
