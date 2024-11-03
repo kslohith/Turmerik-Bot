@@ -22,11 +22,12 @@ This project is a WhatsApp bot designed to collect sensitive medical data from u
    ```bash
    git clone https://github.com/kslohith/Turmerik-Bot
    cd Turmerik-bot
-Install Dependencies:
+
+3. **Install Dependencies**:
     ```bash
     pip install -r requirements.txt
 
-Run Locally:
+4. **Run Locally**:
     ```bash
     python3 main.py
 
@@ -35,20 +36,19 @@ When running locally we need to manually create a .env file and add environment 
 2. ZIP_PASSWORD
 3. Google Cloud Service account to interact with GCP suite of products including storage buckets.
 
-Deploy on Google Cloud Run: Deploy the application on Google Cloud Run to leverage its scalability and managed environment.
 The same 3 environment variables need to be configured on GCP or any cloud provider.
 
 ## API Endpoints
 
-1. **/startConversation**
+1. **/startConversation**:
 Method: POST
 Description: Initiates a conversation with a user by sending an introductory message.
 
-2. **/getIncomingMessages**
+2. **/getIncomingMessages**:
 Method: POST
 Description: This webhook endpoint listens for incoming messages from users. Based on the user's conversation state, the bot responds and progresses through the data collection flow.
 
-3. **/extractData**
+3. **/extractData**:
 Method: GET
 Description: Allows healthcare providers to download collected data in Excel or CSV formats. Files are password-protected for additional security.
 Output: A password-protected file with the requested format.
